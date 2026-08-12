@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2 class="mb-4 text-danger">
+    Secure Quarantine Repository
+</h2>
+
+<div class="card shadow">
+
+    <div class="card-header bg-dark text-white">
+        Quarantined Files
+    </div>
+
+    <div class="card-body">
+
+        {% if files %}
+
+        <table class="table table-bordered table-hover">
+
+            <thead class="table-dark">
+
+                <tr>
+                    <th>ID</th>
+                    <th>Original File</th>
+                    <th>Risk Score</th>
+                    <th>Risk</th>
+                    <th>Status</th>
+                    <th>Restore</th>
+                    <th>Delete</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for file in files %}
+
+                <tr>
+
+                    <td>{{ file.id }}</td>
+
+                    <td>{{ file.original_name }}</td>
+
+                    <td>{{ file.risk_score }}</td>
+
+                    <td>
+
+                        {% if file.risk == "Critical" %}
+                            <span class="badge bg-danger">{{ file.risk }}</span>
+
+                        {% elif file.risk == "High" %}
+                            <span class="badge bg-warning text-dark">{{ file.risk }}</span>
+
+                        {% elif file.risk == "Medium" %}
+                            <span class="badge bg-info">{{ file.risk }}</span>
+
+                        {% else %}
+                            <span class="badge bg-success">{{ file.risk }}</span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ file.status }}</td>
+
+                    <td>
+
+                        {% if not file.restored %}
+
+                        <a href="/restore/{{ file.id }}"
+                           class="btn btn-success btn-sm">
+
+                            Restore
+
+                        </a>
+
+                        {% else %}
+
+                        <span class="badge bg-success">
+
+                            Restored
+
+                        </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        <a href="/delete/{{ file.id }}"
+   class="btn btn-danger btn-sm">
+
+    Delete
+
+</a>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="alert alert-info">
+
+            No quarantined files found.
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<br>
+
+<a href="/" class="btn btn-primary">
+
+    Dashboard
+
+</a>
+
+{% endblock %}

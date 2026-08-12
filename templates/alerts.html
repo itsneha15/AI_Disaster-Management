@@ -1,0 +1,475 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">
+                Alert Management
+            </h2>
+            <p class="text-muted mb-0">
+                Real-time system alerts
+            </p>
+        </div>
+        {% if stats.active > 0 %}
+        <span class="badge bg-danger fs-6 p-2">
+            ⚡ {{ stats.active }} Active Alerts
+        </span>
+        {% else %}
+        <span class="badge bg-success fs-6 p-2">
+            ✅ No Active Alerts
+        </span>
+        {% endif %}
+    </div>
+
+    <!-- TOP SECTION - Stats Cards -->
+    <div class="row g-3 mb-4">
+
+        <!-- Total Alerts -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow text-center
+                        border-primary">
+                <div class="card-body">
+                    <i class="bi bi-bell-fill
+                       text-primary"
+                       style="font-size:35px;">
+                    </i>
+                    <h2 class="fw-bold mt-2
+                        text-primary">
+                        {{ stats.total }}
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Total Alerts
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow text-center
+                        border-danger">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-
+                       circle-fill text-danger"
+                       style="font-size:35px;">
+                    </i>
+                    <h2 class="fw-bold mt-2
+                        text-danger">
+                        {{ stats.active }}
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Active Alerts
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resolved Alerts -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow text-center
+                        border-success">
+                <div class="card-body">
+                    <i class="bi bi-check-circle-
+                       fill text-success"
+                       style="font-size:35px;">
+                    </i>
+                    <h2 class="fw-bold mt-2
+                        text-success">
+                        {{ stats.resolved }}
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Resolved Alerts
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Malware Alerts -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card shadow text-center
+                        border-warning">
+                <div class="card-body">
+                    <i class="bi bi-bug-fill
+                       text-warning"
+                       style="font-size:35px;">
+                    </i>
+                    <h2 class="fw-bold mt-2
+                        text-warning">
+                        {{ stats.malware }}
+                    </h2>
+                    <p class="text-muted mb-0">
+                        Malware Alerts
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FAILURE ALERTS TABLE -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-danger
+                    text-white d-flex
+                    justify-content-between
+                    align-items-center">
+            <strong>
+                ⚠ Failure Alerts
+            </strong>
+            <span class="badge bg-white
+                         text-danger">
+                {{ failure_alerts|length }}
+            </span>
+        </div>
+        <div class="card-body p-0">
+            {% if failure_alerts %}
+            <div class="table-responsive">
+                <table class="table
+                              table-hover
+                              align-middle
+                              mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Alert ID</th>
+                            <th>Timestamp</th>
+                            <th>Severity</th>
+                            <th>Probability</th>
+                            <th>System Metrics</th>
+                            <th>Recommended Action</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for alert in failure_alerts %}
+                    <tr>
+
+                        <!-- Alert ID -->
+                        <td>
+                            <strong>
+                                #{{ alert.id }}
+                            </strong>
+                        </td>
+
+                        <!-- Timestamp -->
+                        <td>
+                            <small class="text-muted">
+                                {{ alert.timestamp }}
+                            </small>
+                        </td>
+
+                        <!-- Severity -->
+                        <td>
+                            {% if alert.severity
+                                == "Critical" %}
+                            <span class="badge
+                                bg-danger">
+                                🔴 Critical
+                            </span>
+                            {% elif alert.severity
+                                == "High" %}
+                            <span class="badge
+                                bg-warning
+                                text-dark">
+                                🟡 High
+                            </span>
+                            {% else %}
+                            <span class="badge
+                                bg-info">
+                                🔵 Medium
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Failure Probability -->
+                        <td>
+                            <strong class=
+                                "text-danger
+                                 fs-6">
+                                {{ alert.probability }}
+                            </strong>
+                        </td>
+
+                        <!-- System Metrics -->
+                        <td>
+                            <small>
+                            <table class="table
+                                table-sm mb-0">
+                                <tr>
+                                    <td>CPU</td>
+                                    <td>
+                                    <strong>
+                                    {{ alert.metrics.cpu }}%
+                                    </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Memory</td>
+                                    <td>
+                                    <strong>
+                                    {{ alert.metrics.memory }}%
+                                    </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Disk</td>
+                                    <td>
+                                    <strong>
+                                    {{ alert.metrics.disk }}%
+                                    </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Network</td>
+                                    <td>
+                                    <strong>
+                                    {{ alert.metrics.network }}%
+                                    </strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Processes</td>
+                                    <td>
+                                    <strong>
+                                    {{ alert.metrics.processes }}
+                                    </strong>
+                                    </td>
+                                </tr>
+                            </table>
+                            </small>
+                        </td>
+
+                        <!-- Recommended Action -->
+                        <td>
+                            <small class=
+                                "text-success">
+                                <i class="bi
+                                   bi-check2">
+                                </i>
+                                {{ alert.recommended_action }}
+                            </small>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            {% if alert.status
+                                == "Active" %}
+                            <span class="badge
+                                bg-danger">
+                                ⚡ Active
+                            </span>
+                            {% else %}
+                            <span class="badge
+                                bg-success">
+                                ✅ Resolved
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Resolve Button -->
+                        <td>
+                            {% if alert.status
+                                == "Active" %}
+                            <a href=
+                            "/resolve/{{ alert.id }}"
+                               class="btn
+                                      btn-success
+                                      btn-sm">
+                                <i class="bi
+                                   bi-check-lg">
+                                </i>
+                                Resolve
+                            </a>
+                            {% else %}
+                            <span class=
+                                "text-muted">
+                                Done
+                            </span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <div class="alert alert-success
+                        m-3 text-center p-4">
+                <i class="bi bi-shield-check"
+                   style="font-size:40px;">
+                </i>
+                <h5 class="mt-2">
+                    No Failure Alerts
+                </h5>
+                <p class="text-muted mb-0">
+                    System is operating normally
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- MALWARE ALERTS TABLE -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark
+                    text-white d-flex
+                    justify-content-between
+                    align-items-center">
+            <strong>
+                🦠 Malware Alerts
+            </strong>
+            <span class="badge bg-white
+                         text-dark">
+                {{ malware_alerts|length }}
+            </span>
+        </div>
+        <div class="card-body p-0">
+            {% if malware_alerts %}
+            <div class="table-responsive">
+                <table class="table
+                              table-hover
+                              align-middle
+                              mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Alert ID</th>
+                            <th>Timestamp</th>
+                            <th>File Name</th>
+                            <th>Threat Level</th>
+                            <th>Malware Type</th>
+                            <th>Action Taken</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for alert in malware_alerts %}
+                    <tr>
+
+                        <!-- Alert ID -->
+                        <td>
+                            <strong>
+                                #{{ alert.id }}
+                            </strong>
+                        </td>
+
+                        <!-- Timestamp -->
+                        <td>
+                            <small class="text-muted">
+                                {{ alert.timestamp }}
+                            </small>
+                        </td>
+
+                        <!-- File Name -->
+                        <td>
+                            <i class="bi
+                               bi-file-earmark-x
+                               text-danger">
+                            </i>
+                            <strong>
+                                {{ alert.filename }}
+                            </strong>
+                        </td>
+
+                        <!-- Threat Level -->
+                        <td>
+                            <span class="badge
+                                bg-danger">
+                                🔴 {{ alert.threat_level }}
+                            </span>
+                        </td>
+
+                        <!-- Malware Type -->
+                        <td>
+                            <span class="badge
+                                bg-warning
+                                text-dark">
+                                {{ alert.malware_type }}
+                            </span>
+                        </td>
+
+                        <!-- Action Taken -->
+                        <td>
+                            <small class=
+                                "text-success">
+                                ✓ {{ alert.action_taken }}
+                            </small>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            {% if alert.status
+                                == "Active" %}
+                            <span class="badge
+                                bg-danger">
+                                ⚡ Active
+                            </span>
+                            {% else %}
+                            <span class="badge
+                                bg-success">
+                                ✅ Resolved
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <!-- Resolve Button -->
+                        <td>
+                            {% if alert.status
+                                == "Active" %}
+                            <a href=
+                            "/resolve/{{ alert.id }}"
+                               class="btn
+                                      btn-success
+                                      btn-sm">
+                                <i class="bi
+                                   bi-check-lg">
+                                </i>
+                                Resolve
+                            </a>
+                            {% else %}
+                            <span class=
+                                "text-muted">
+                                Done
+                            </span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <div class="alert alert-success
+                        m-3 text-center p-4">
+                <i class="bi bi-shield-check"
+                   style="font-size:40px;">
+                </i>
+                <h5 class="mt-2">
+                    No Malware Alerts
+                </h5>
+                <p class="text-muted mb-0">
+                    No malware detected
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!-- Auto refresh every 5 seconds -->
+<script>
+setInterval(function() {
+    location.reload();
+}, 5000);
+</script>
+
+{% endblock %}

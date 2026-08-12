@@ -1,0 +1,7 @@
+pefile
+watchdog
+numpy
+pandas
+joblib
+scikit-learn
+tqdm

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <h2 class="mb-4 fw-bold">
+        <i class="bi bi-file-text-fill"></i>
+        System Logs
+    </h2>
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white">
+
+            Recent Activity
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-hover">
+
+                <thead>
+
+                <tr>
+
+                    <th>Time</th>
+
+                    <th>Event</th>
+
+                    <th>Status</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>06-07-2026 20:10</td>
+
+                        <td>virus.exe quarantined</td>
+
+                        <td>
+
+                            <span class="badge bg-danger">
+
+                                Success
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>06-07-2026 20:15</td>
+
+                        <td>virus.exe restored</td>
+
+                        <td>
+
+                            <span class="badge bg-success">
+
+                                Success
+
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

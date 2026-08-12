@@ -1,0 +1,101 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+
+# =========================
+# Virtual environments
+# =========================
+venv/
+.venv/
+env/
+
+# =========================
+# Secrets / Credentials
+# =========================
+.env
+.env.*
+!.env.example
+
+credentials.json
+token.json
+onedrive_token_cache.bin
+master.key
+
+config/master.key
+config/admin.json
+
+# =========================
+# Database / local state
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+storage/logs/
+secure_repository/logs/
+
+# =========================
+# Generated reports
+# =========================
+reports/
+graphs/
+
+# =========================
+# Local backup files
+# =========================
+storage/local_backup/
+
+# =========================
+# Local quarantine / encrypted files
+# =========================
+storage/quarantine/
+secure_repository/encrypted/
+secure_repository/restored/
+
+# =========================
+# Test / sample files
+# =========================
+sample.exe
+test.txt
+
+# =========================
+# Local monitored data
+# =========================
+monitored_folder/
+critical_data/
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Vercel
+# =========================
+.vercel/
+# Runtime data
+storage/alerts.json
+# Runtime metadata
+secure_repository/metadata/metadata.json
+
+# Dashboard backups
+*.backup
+*.bak
+
+# Temporary files
+*.tmp

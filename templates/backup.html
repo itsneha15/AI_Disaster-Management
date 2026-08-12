@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">
+                Backup and Recovery
+            </h2>
+            <p class="text-muted mb-0">
+                Multi-Cloud Automated Backup System
+            </p>
+        </div>
+        <div>
+            <span class="badge bg-success fs-6 p-2">
+                <i class="bi bi-cloud-check-fill"></i>
+                Backup Active
+            </span>
+        </div>
+    </div>
+
+    <!-- System Metrics -->
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <strong>CPU Usage</strong>
+                </div>
+                <div class="card-body text-center">
+                    <h1 class="fw-bold
+                        {% if status.cpu > 40 %}
+                            text-danger
+                        {% else %}
+                            text-success
+                        {% endif %}">
+                        {{ status.cpu }}%
+                    </h1>
+                    <div class="progress">
+                        <div class="progress-bar
+                            {% if status.cpu > 40 %}
+                                bg-danger
+                            {% else %}
+                                bg-success
+                            {% endif %}"
+                            style="width:{{ status.cpu }}%">
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Threshold: 40%
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <strong>Memory Usage</strong>
+                </div>
+                <div class="card-body text-center">
+                    <h1 class="fw-bold
+                        {% if status.memory > 86 %}
+                            text-danger
+                        {% else %}
+                            text-success
+                        {% endif %}">
+                        {{ status.memory }}%
+                    </h1>
+                    <div class="progress">
+                        <div class="progress-bar
+                            {% if status.memory > 86 %}
+                                bg-danger
+                            {% else %}
+                                bg-success
+                            {% endif %}"
+                            style="width:{{ status.memory }}%">
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Threshold: 86%
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <strong>Disk Usage</strong>
+                </div>
+                <div class="card-body text-center">
+                    <h1 class="fw-bold
+                        {% if status.disk > 60 %}
+                            text-danger
+                        {% else %}
+                            text-success
+                        {% endif %}">
+                        {{ status.disk }}%
+                    </h1>
+                    <div class="progress">
+                        <div class="progress-bar
+                            {% if status.disk > 60 %}
+                                bg-danger
+                            {% else %}
+                                bg-success
+                            {% endif %}"
+                            style="width:{{ status.disk }}%">
+                        </div>
+                    </div>
+                    <small class="text-muted">
+                        Threshold: 60%
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Backup Info -->
+    <div class="row mt-4">
+
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <strong>
+                        <i class="bi bi-cloud-upload-fill"></i>
+                        Backup Information
+                    </strong>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <td>System Status</td>
+                            <td>
+                                <strong>
+                                {% if status.status == "Normal" %}
+                                    <span class="text-success">
+                                        ✅ {{ status.status }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-danger">
+                                        ⚠ {{ status.status }}
+                                    </span>
+                                {% endif %}
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Last Backup</td>
+                            <td>
+                                <strong class="text-primary">
+                                    {{ status.last_backup }}
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Last Recovery</td>
+                            <td>
+                                <strong class="text-success">
+                                    {{ status.last_recovery }}
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Threats Detected</td>
+                            <td>
+                                <strong class="text-danger">
+                                    {{ status.threats }}
+                                </strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Backup Interval</td>
+                            <td>Every 1 Hour</td>
+                        </tr>
+                        <tr>
+                            <td>RPO</td>
+                            <td>Maximum 1 Hour</td>
+                        </tr>
+                        <tr>
+                            <td>RTO</td>
+                            <td>Under 30 Seconds</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <strong>
+                        <i class="bi bi-cloud-fill"></i>
+                        Multi-Cloud Storage Status
+                    </strong>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Storage</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <i class="bi bi-hdd-fill">
+                                    </i>
+                                    Local
+                                </td>
+                                <td>Custom</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                </td>
+                                <td>1st</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <i class="bi bi-google">
+                                    </i>
+                                    Google Drive
+                                </td>
+                                <td>15 GB</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                </td>
+                                <td>2nd</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <i class="bi bi-microsoft">
+                                    </i>
+                                    OneDrive
+                                </td>
+                                <td>5 GB</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                </td>
+                                <td>3rd</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <i class="bi bi-dropbox">
+                                    </i>
+                                    Dropbox
+                                </td>
+                                <td>2 GB</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        Active
+                                    </span>
+                                </td>
+                                <td>4th</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Recovery Flowchart -->
+    <div class="card shadow mt-4">
+        <div class="card-header bg-dark text-white">
+            <strong>Recovery Failover Process</strong>
+        </div>
+        <div class="card-body text-center">
+            <div class="d-flex justify-content-center
+                        align-items-center flex-wrap gap-2">
+
+                <div class="badge bg-danger p-3 fs-6">
+                    ⚠ Disaster Occurs
+                </div>
+                <i class="bi bi-arrow-right fs-4"></i>
+                <div class="badge bg-secondary p-3 fs-6">
+                    💾 Try Local
+                </div>
+                <i class="bi bi-arrow-right fs-4"></i>
+                <div class="badge bg-primary p-3 fs-6">
+                    ☁ Try Google Drive
+                </div>
+                <i class="bi bi-arrow-right fs-4"></i>
+                <div class="badge bg-info p-3 fs-6">
+                    ☁ Try OneDrive
+                </div>
+                <i class="bi bi-arrow-right fs-4"></i>
+                <div class="badge bg-primary p-3 fs-6">
+                    ☁ Try Dropbox
+                </div>
+                <i class="bi bi-arrow-right fs-4"></i>
+                <div class="badge bg-success p-3 fs-6">
+                    ✅ Restored!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Controls -->
+    <div class="card shadow mt-4">
+        <div class="card-header bg-dark text-white">
+            <strong>Manual Controls</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Create Manual Backup</h5>
+                    <p class="text-muted">
+                        Manually trigger backup to
+                        all cloud providers
+                    </p>
+                    <a href="/manual_backup"
+                       class="btn btn-primary">
+                        <i class="bi bi-cloud-upload-fill">
+                        </i>
+                        Backup Now
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <h5>Manual Recovery</h5>
+                    <p class="text-muted">
+                        Manually trigger recovery
+                        from latest backup
+                    </p>
+                    <a href="/manual_recovery"
+                       class="btn btn-success">
+                        <i class="bi bi-cloud-download-fill">
+                        </i>
+                        Restore Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// Auto refresh every 5 seconds
+setInterval(function() {
+    location.reload();
+}, 5000);
+</script>
+
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+<h2 class="fw-bold mb-4">
+
+<i class="bi bi-bar-chart-fill"></i>
+
+Analytics
+
+</h2>
+
+<div class="row">
+
+<div class="col-lg-6">
+
+<div class="card shadow">
+
+<div class="card-header">
+
+Threat Distribution
+
+</div>
+
+<div class="card-body">
+
+<canvas id="analyticsPie"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="card shadow">
+
+<div class="card-header">
+
+Threat Overview
+
+</div>
+
+<div class="card-body">
+
+<canvas id="analyticsBar"></canvas>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+new Chart(document.getElementById("analyticsPie"),{
+
+type:"pie",
+
+data:{
+
+labels:["Safe","Quarantined","Critical"],
+
+datasets:[{
+
+data:[40,15,5]
+
+}]
+
+}
+
+});
+
+new Chart(document.getElementById("analyticsBar"),{
+
+type:"bar",
+
+data:{
+
+labels:["Mon","Tue","Wed","Thu","Fri"],
+
+datasets:[{
+
+label:"Threats",
+
+data:[2,4,1,6,3]
+
+}]
+
+}
+
+});
+
+</script>
+
+{% endblock %}

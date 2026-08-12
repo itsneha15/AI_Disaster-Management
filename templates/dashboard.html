@@ -1,0 +1,2309 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- ========================================================= -->
+    <!-- PAGE HEADER -->
+    <!-- ========================================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold">Dashboard</h2>
+
+            <p class="text-muted mb-0">
+                AI-Assisted IT Disaster Recovery Monitoring System
+            </p>
+        </div>
+
+        <div class="text-end">
+
+            <span
+                id="liveConnection"
+                class="badge bg-success fs-6 p-2"
+            >
+                ● Live
+            </span>
+
+            <small
+                id="lastLiveUpdate"
+                class="text-muted d-block mt-1"
+            >
+                Connecting...
+            </small>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- STATISTICS CARDS -->
+    <!-- ========================================================= -->
+
+    <div class="row g-4">
+
+        <!-- Total Scanned -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Total Scanned
+                            </small>
+
+                            <h2
+                                id="liveScanned"
+                                class="fw-bold mt-2"
+                            >
+                                {{ stats.scanned }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+                            <i
+                                class="bi bi-search text-primary"
+                                style="font-size:45px;"
+                            ></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Safe Files -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Safe Files
+                            </small>
+
+                            <h2
+                                id="liveSafe"
+                                class="fw-bold text-success mt-2"
+                            >
+                                {{ stats.safe }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+                            <i
+                                class="bi bi-check-circle-fill text-success"
+                                style="font-size:45px;"
+                            ></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Quarantined -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Quarantined
+                            </small>
+
+                            <h2
+                                id="liveQuarantined"
+                                class="fw-bold text-warning mt-2"
+                            >
+                                {{ stats.quarantined }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+                            <i
+                                class="bi bi-shield-lock-fill text-warning"
+                                style="font-size:45px;"
+                            ></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Critical -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Critical Threats
+                            </small>
+
+                            <h2
+                                id="liveCritical"
+                                class="fw-bold text-danger mt-2"
+                            >
+                                {{ stats.critical }}
+                            </h2>
+
+                        </div>
+
+                        <div>
+                            <i
+                                class="bi bi-exclamation-triangle-fill text-danger"
+                                style="font-size:45px;"
+                            ></i>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- CHARTS -->
+    <!-- ========================================================= -->
+
+    <div class="row mt-4">
+
+        <!-- Pie Chart -->
+        <div class="col-lg-5">
+
+            <div class="card shadow">
+
+                <div class="card-header">
+                    <strong>Threat Distribution</strong>
+                </div>
+
+                <div class="card-body">
+
+                    <canvas
+                        id="pieChart"
+                        data-safe="{{ stats.safe }}"
+                        data-quarantined="{{ stats.quarantined }}"
+                        data-critical="{{ stats.critical }}"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Bar Chart -->
+        <div class="col-lg-7">
+
+            <div class="card shadow">
+
+                <div class="card-header">
+                    <strong>Threat Overview</strong>
+                </div>
+
+                <div
+                    class="card-body"
+                    style="height:320px;"
+                >
+
+                    <canvas
+                        id="barChart"
+                        data-scanned="{{ stats.scanned }}"
+                        data-safe="{{ stats.safe }}"
+                        data-quarantined="{{ stats.quarantined }}"
+                        data-critical="{{ stats.critical }}"
+                    ></canvas>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- SYSTEM MONITOR -->
+    <!-- ========================================================= -->
+
+    <div class="row mt-4">
+
+
+        <!-- CPU -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                CPU Usage
+                            </small>
+
+                            <h2
+                                id="liveCPU"
+                                class="fw-bold mt-2"
+                            >
+                                {{ stats.system_status.cpu }}%
+                            </h2>
+
+                            <small class="text-muted">
+                                Threshold: 40%
+                            </small>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-cpu-fill text-primary"
+                                style="font-size:45px;"
+                            ></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress mt-2">
+
+                        <div
+                            id="cpuProgress"
+                            class="progress-bar
+                            {% if stats.system_status.cpu > 40 %}
+                                bg-danger
+                            {% elif stats.system_status.cpu > 25 %}
+                                bg-warning
+                            {% else %}
+                                bg-success
+                            {% endif %}"
+                            style="width: {{ stats.system_status.cpu }}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Memory -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Memory Usage
+                            </small>
+
+                            <h2
+                                id="liveMemory"
+                                class="fw-bold mt-2"
+                            >
+                                {{ stats.system_status.memory }}%
+                            </h2>
+
+                            <small class="text-muted">
+                                Threshold: 86%
+                            </small>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-memory text-warning"
+                                style="font-size:45px;"
+                            ></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress mt-2">
+
+                        <div
+                            id="memoryProgress"
+                            class="progress-bar
+                            {% if stats.system_status.memory > 86 %}
+                                bg-danger
+                            {% elif stats.system_status.memory > 70 %}
+                                bg-warning
+                            {% else %}
+                                bg-success
+                            {% endif %}"
+                            style="width: {{ stats.system_status.memory }}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Disk -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                Disk Usage
+                            </small>
+
+                            <h2
+                                id="liveDisk"
+                                class="fw-bold mt-2"
+                            >
+                                {{ stats.system_status.disk }}%
+                            </h2>
+
+                            <small class="text-muted">
+                                Threshold: 60%
+                            </small>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-hdd-fill text-info"
+                                style="font-size:45px;"
+                            ></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="progress mt-2">
+
+                        <div
+                            id="diskProgress"
+                            class="progress-bar
+                            {% if stats.system_status.disk > 60 %}
+                                bg-danger
+                            {% elif stats.system_status.disk > 45 %}
+                                bg-warning
+                            {% else %}
+                                bg-success
+                            {% endif %}"
+                            style="width: {{ stats.system_status.disk }}%"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- System Status -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+
+                        <div>
+
+                            <small class="text-muted">
+                                System Status
+                            </small>
+
+                            <h4
+                                id="liveSystemStatus"
+                                class="fw-bold mt-2"
+                            >
+
+                                {% if stats.system_status.status == "Normal" %}
+
+                                    <span class="text-success">
+                                        ✅ Normal
+                                    </span>
+
+                                {% elif stats.system_status.status == "Recovered" %}
+
+                                    <span class="text-info">
+                                        🔄 Recovered
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="text-danger">
+                                        ⚠ {{ stats.system_status.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </h4>
+
+                            <small class="text-muted">
+                                AI Monitoring Active
+                            </small>
+
+                        </div>
+
+                        <div>
+
+                            <i
+                                class="bi bi-shield-check text-success"
+                                style="font-size:45px;"
+                            ></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- NETWORK + PROCESS MONITORING -->
+    <!-- ========================================================= -->
+
+    <div class="row mt-4">
+
+
+        <!-- Network -->
+        <div class="col-lg-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-primary text-white">
+
+                    <strong>
+                        🌐 Network Monitoring
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p>
+                        <strong>Upload Speed:</strong>
+                        <span id="liveUpload">
+                            {{ stats.system_status.network_speed_up }}
+                        </span>
+                        KB/s
+                    </p>
+
+                    <p>
+                        <strong>Download Speed:</strong>
+                        <span id="liveDownload">
+                            {{ stats.system_status.network_speed_down }}
+                        </span>
+                        KB/s
+                    </p>
+
+                    <p>
+                        <strong>Total Sent:</strong>
+                        <span id="liveSent">
+                            {{ stats.system_status.network_sent }}
+                        </span>
+                    </p>
+
+                    <p>
+                        <strong>Total Received:</strong>
+                        <span id="liveReceived">
+                            {{ stats.system_status.network_recv }}
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Processes -->
+        <div class="col-lg-6">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-success text-white">
+
+                    <strong>
+                        ⚙ Process Monitoring
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <h5>
+
+                        Running Processes:
+
+                        <span id="liveProcessCount">
+                            {{ stats.system_status.process_count }}
+                        </span>
+
+                    </h5>
+
+                    <hr>
+
+                    <div id="liveProcesses">
+
+                        {% for process in stats.system_status.top_processes %}
+
+                        <div class="d-flex justify-content-between">
+
+                            <span>
+                                {{ process.name }}
+                            </span>
+
+                            <span>
+                                {{ process.cpu }}%
+                            </span>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- BACKUP STATUS -->
+    <!-- ========================================================= -->
+
+    <div class="row mt-4">
+
+
+        <!-- Last Backup -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow border-primary">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Last Backup
+                    </small>
+
+                    <h5
+                        id="liveLastBackup"
+                        class="fw-bold mt-1 text-primary"
+                    >
+                        {{ stats.system_status.last_backup }}
+                    </h5>
+
+                    <small class="text-muted">
+                        Auto backup every 1 hour
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Last Recovery -->
+        <div class="col-lg-3 col-md-6">
+
+            <div class="card shadow border-success">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Last Recovery
+                    </small>
+
+                    <h5
+                        id="liveLastRecovery"
+                        class="fw-bold mt-1 text-success"
+                    >
+                        {{ stats.system_status.last_recovery }}
+                    </h5>
+
+                    <small class="text-muted">
+                        RTO: Under 30 seconds
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Multi Cloud -->
+        <div class="col-lg-6 col-md-12">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <small class="text-muted fw-bold">
+                        Multi-Cloud Backup Status
+                    </small>
+
+                    <div class="row mt-2">
+
+
+                        <div class="col-3 text-center">
+
+                            <i
+                                class="bi bi-google text-primary"
+                                style="font-size:24px;"
+                            ></i>
+
+                            <br>
+
+                            <small>Google Drive</small>
+
+                            <br>
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        </div>
+
+
+                        <div class="col-3 text-center">
+
+                            <i
+                                class="bi bi-microsoft text-info"
+                                style="font-size:24px;"
+                            ></i>
+
+                            <br>
+
+                            <small>OneDrive</small>
+
+                            <br>
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        </div>
+
+
+                        <div class="col-3 text-center">
+
+                            <i
+                                class="bi bi-dropbox text-primary"
+                                style="font-size:24px;"
+                            ></i>
+
+                            <br>
+
+                            <small>Dropbox</small>
+
+                            <br>
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        </div>
+
+
+                        <div class="col-3 text-center">
+
+                            <i
+                                class="bi bi-hdd-fill text-secondary"
+                                style="font-size:24px;"
+                            ></i>
+
+                            <br>
+
+                            <small>Local</small>
+
+                            <br>
+
+                            <span class="badge bg-success">
+                                Active
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- QUICK ACTIONS -->
+    <!-- ========================================================= -->
+
+    <div class="row mt-4">
+
+        <div class="col-12">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-dark text-white">
+
+                    <strong>
+                        Quick Actions — Backup and Recovery
+                    </strong>
+
+                </div>
+
+                <div class="card-body">
+
+                    <a
+                        href="/manual_backup"
+                        class="btn btn-primary me-2"
+                    >
+                        <i class="bi bi-cloud-upload-fill"></i>
+                        Create Backup Now
+                    </a>
+
+                    <a
+                        href="/manual_recovery"
+                        class="btn btn-success me-2"
+                    >
+                        <i class="bi bi-cloud-download-fill"></i>
+                        Restore Now
+                    </a>
+
+                    <a
+                        href="/backup"
+                        class="btn btn-info text-white"
+                    >
+                        <i class="bi bi-bar-chart-fill"></i>
+                        View Full Backup Status
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- ALERTS -->
+    <!-- ========================================================= -->
+
+    <div class="card shadow mt-4">
+
+        <div
+            class="card-header bg-danger text-white d-flex justify-content-between align-items-center"
+        >
+
+            <strong>
+                🚨 Recent Alerts
+            </strong>
+
+            <span
+                id="activeAlerts"
+                class="badge bg-light text-dark"
+            >
+                {{ stats.alert_stats.active }} Active
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div
+                id="alertsTableContainer"
+                class="table-responsive"
+            >
+
+                {% if stats.recent_alerts %}
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Details</th>
+                            <th>Severity</th>
+                            <th>Status</th>
+                            <th>Time</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="liveAlertsTable">
+
+                    {% for alert in stats.recent_alerts %}
+
+                        <tr>
+
+                            <td>
+                                {{ alert.id }}
+                            </td>
+
+                            <td>
+
+                                {% if alert.type == "failure" %}
+
+                                    <span
+                                        class="badge bg-warning text-dark"
+                                    >
+                                        Failure
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-dark">
+                                        Malware
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if alert.type == "failure" %}
+
+                                    Predicted failure
+                                    ({{ alert.probability }})
+
+                                {% else %}
+
+                                    {{ alert.filename }}
+                                    —
+                                    {{ alert.malware_type }}
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% set sev =
+                                    alert.severity
+                                    if alert.type == "failure"
+                                    else alert.threat_level
+                                %}
+
+                                {% if sev == "Critical" %}
+
+                                    <span class="badge bg-danger">
+                                        {{ sev }}
+                                    </span>
+
+                                {% elif sev == "High" %}
+
+                                    <span
+                                        class="badge bg-warning text-dark"
+                                    >
+                                        {{ sev }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-info">
+                                        {{ sev }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if alert.status == "Active" %}
+
+                                    <span class="badge bg-danger">
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Resolved
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ alert.timestamp }}
+                            </td>
+
+                            <td>
+
+                                {% if alert.status == "Active" %}
+
+                                <a
+                                    href="/resolve/{{ alert.id }}"
+                                    class="btn btn-sm btn-outline-success"
+                                >
+                                    Resolve
+                                </a>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                <a
+                    href="/alerts"
+                    class="btn btn-sm btn-outline-dark"
+                >
+                    View All Alerts
+                </a>
+
+                {% else %}
+
+                <div class="alert alert-success mb-0">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    No alerts yet.
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- RECENT THREATS -->
+    <!-- ========================================================= -->
+
+    <div class="card shadow mt-4">
+
+        <div class="card-header bg-dark text-white">
+
+            <strong>
+                Recent Threats
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <div
+                id="threatsTableContainer"
+                class="table-responsive"
+            >
+
+                {% if files %}
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+                            <th>File Name</th>
+                            <th>Risk Score</th>
+                            <th>Risk</th>
+                            <th>Status</th>
+                            <th>Time</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="liveThreatsTable">
+
+                    {% for file in files %}
+
+                        <tr>
+
+                            <td>
+                                {{ file.id }}
+                            </td>
+
+                            <td>
+
+                                <i
+                                    class="bi bi-file-earmark-fill text-primary"
+                                ></i>
+
+                                {{ file.original_name }}
+
+                            </td>
+
+                            <td>
+
+                                <span class="badge bg-secondary">
+                                    {{ file.risk_score }}
+                                </span>
+
+                            </td>
+
+                            <td>
+
+                                {% if file.risk == "Critical" %}
+
+                                    <span class="badge bg-danger">
+                                        {{ file.risk }}
+                                    </span>
+
+                                {% elif file.risk == "High" %}
+
+                                    <span
+                                        class="badge bg-warning text-dark"
+                                    >
+                                        {{ file.risk }}
+                                    </span>
+
+                                {% elif file.risk == "Medium" %}
+
+                                    <span class="badge bg-info">
+                                        {{ file.risk }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        {{ file.risk }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if file.status == "Quarantined" %}
+
+                                    <span class="badge bg-danger">
+                                        {{ file.status }}
+                                    </span>
+
+                                {% elif file.status == "Restored" %}
+
+                                    <span class="badge bg-success">
+                                        {{ file.status }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+                                        {{ file.status }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ file.timestamp }}
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                {% else %}
+
+                <div class="alert alert-success">
+
+                    <i class="bi bi-check-circle-fill"></i>
+
+                    No threats detected.
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =========================================================
+       PIE CHART
+       ========================================================= */
+
+    const pieCanvas =
+        document.getElementById("pieChart");
+
+    let pieChart = null;
+
+    if (
+        pieCanvas &&
+        typeof Chart !== "undefined"
+    ) {
+
+        const safe =
+            Number(pieCanvas.dataset.safe || 0);
+
+        const quarantined =
+            Number(pieCanvas.dataset.quarantined || 0);
+
+        const critical =
+            Number(pieCanvas.dataset.critical || 0);
+
+
+        pieChart = new Chart(
+            pieCanvas,
+            {
+
+                type: "pie",
+
+                data: {
+
+                    labels: [
+                        "Safe",
+                        "Quarantined",
+                        "Critical"
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            data: [
+                                safe,
+                                quarantined,
+                                critical
+                            ],
+
+                            backgroundColor: [
+                                "#10B981",
+                                "#F59E0B",
+                                "#EF4444"
+                            ],
+
+                            borderWidth: 2
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    plugins: {
+
+                        legend: {
+
+                            position: "bottom"
+
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       BAR CHART
+       ========================================================= */
+
+    const barCanvas =
+        document.getElementById("barChart");
+
+    let barChart = null;
+
+    if (
+        barCanvas &&
+        typeof Chart !== "undefined"
+    ) {
+
+        const scanned =
+            Number(barCanvas.dataset.scanned || 0);
+
+        const safe =
+            Number(barCanvas.dataset.safe || 0);
+
+        const quarantined =
+            Number(barCanvas.dataset.quarantined || 0);
+
+        const critical =
+            Number(barCanvas.dataset.critical || 0);
+
+
+        barChart = new Chart(
+            barCanvas,
+            {
+
+                type: "bar",
+
+                data: {
+
+                    labels: [
+                        "Scanned",
+                        "Safe",
+                        "Quarantined",
+                        "Critical"
+                    ],
+
+                    datasets: [
+
+                        {
+
+                            label: "Files",
+
+                            data: [
+                                scanned,
+                                safe,
+                                quarantined,
+                                critical
+                            ],
+
+                            backgroundColor: [
+                                "#2563EB",
+                                "#10B981",
+                                "#F59E0B",
+                                "#EF4444"
+                            ],
+
+                            borderRadius: 8
+
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: true,
+
+                            ticks: {
+                                precision: 0
+                            }
+
+                        }
+
+                    },
+
+                    plugins: {
+
+                        legend: {
+                            display: false
+                        }
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================================
+       LIVE API
+       ========================================================= */
+       const LIVE_API = "/live_data";
+
+    /* =========================================================
+       HELPER
+       ========================================================= */
+
+    function updateElement(id, value) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+
+            element.textContent =
+                value ?? "-";
+
+        }
+
+    }
+
+
+    /* =========================================================
+       PROGRESS BAR
+       ========================================================= */
+
+    function updateProgressBar(
+        id,
+        value,
+        warning,
+        danger
+    ) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+            return;
+        }
+
+
+        const numericValue =
+            Number(value || 0);
+
+
+        element.style.width =
+            Math.min(numericValue, 100) + "%";
+
+
+        element.classList.remove(
+            "bg-success",
+            "bg-warning",
+            "bg-danger"
+        );
+
+
+        if (numericValue >= danger) {
+
+            element.classList.add(
+                "bg-danger"
+            );
+
+        }
+
+        else if (numericValue >= warning) {
+
+            element.classList.add(
+                "bg-warning"
+            );
+
+        }
+
+        else {
+
+            element.classList.add(
+                "bg-success"
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       SYSTEM STATUS
+       ========================================================= */
+
+    function updateSystemStatus(status) {
+
+        const element =
+            document.getElementById(
+                "liveSystemStatus"
+            );
+
+        if (!element) {
+            return;
+        }
+
+
+        if (status === "Normal") {
+
+            element.innerHTML =
+                '<span class="text-success">✅ Normal</span>';
+
+        }
+
+        else if (status === "Recovered") {
+
+            element.innerHTML =
+                '<span class="text-info">🔄 Recovered</span>';
+
+        }
+
+        else {
+
+            element.innerHTML =
+                '<span class="text-danger">⚠ '
+                + (status || "Warning")
+                + '</span>';
+
+        }
+
+    }
+
+
+    /* =========================================================
+       PROCESS LIST
+       ========================================================= */
+
+    function updateProcesses(processes) {
+
+        const container =
+            document.getElementById(
+                "liveProcesses"
+            );
+
+        if (!container) {
+            return;
+        }
+
+
+        if (
+            !Array.isArray(processes) ||
+            processes.length === 0
+        ) {
+
+            container.innerHTML =
+                '<span class="text-muted">No process data</span>';
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            processes
+                .map(function (process) {
+
+                    return `
+                        <div class="d-flex justify-content-between">
+                            <span>${escapeHtml(process.name ?? "-")}</span>
+                            <span>${process.cpu ?? 0}%</span>
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+    }
+
+
+    /* =========================================================
+       HTML ESCAPE
+       ========================================================= */
+
+    function escapeHtml(value) {
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================================================
+       ALERT TABLE
+       ========================================================= */
+
+    function updateAlerts(alerts) {
+
+        const table =
+            document.getElementById(
+                "liveAlertsTable"
+            );
+
+        if (!table) {
+            return;
+        }
+
+
+        if (
+            !Array.isArray(alerts) ||
+            alerts.length === 0
+        ) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="7"
+                        class="text-center text-muted">
+                        No alerts yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        const recent =
+            alerts.slice(0, 5);
+
+
+        table.innerHTML =
+            recent
+                .map(function (alert) {
+
+                    const type =
+                        alert.type || "failure";
+
+
+                    const severity =
+                        type === "failure"
+                            ? alert.severity
+                            : alert.threat_level;
+
+
+                    let severityBadge =
+                        '<span class="badge bg-info">'
+                        + escapeHtml(severity || "Unknown")
+                        + '</span>';
+
+
+                    if (severity === "Critical") {
+
+                        severityBadge =
+                            '<span class="badge bg-danger">'
+                            + escapeHtml(severity)
+                            + '</span>';
+
+                    }
+
+                    else if (severity === "High") {
+
+                        severityBadge =
+                            '<span class="badge bg-warning text-dark">'
+                            + escapeHtml(severity)
+                            + '</span>';
+
+                    }
+
+
+                    const typeBadge =
+                        type === "failure"
+
+                            ? '<span class="badge bg-warning text-dark">Failure</span>'
+
+                            : '<span class="badge bg-dark">Malware</span>';
+
+
+                    const details =
+                        type === "failure"
+
+                            ? 'Predicted failure ('
+                              + escapeHtml(
+                                  alert.probability || "-"
+                                )
+                              + ')'
+
+                            : escapeHtml(
+                                (alert.filename || "-")
+                                + " — "
+                                + (alert.malware_type || "-")
+                              );
+
+
+                    const statusBadge =
+                        alert.status === "Active"
+
+                            ? '<span class="badge bg-danger">Active</span>'
+
+                            : '<span class="badge bg-success">Resolved</span>';
+
+
+                    const resolveButton =
+                        alert.status === "Active"
+
+                            ? `
+                                <a
+                                    href="/resolve/${alert.id}"
+                                    class="btn btn-sm btn-outline-success"
+                                >
+                                    Resolve
+                                </a>
+                              `
+
+                            : "";
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${escapeHtml(alert.id ?? "-")}
+                            </td>
+
+                            <td>
+                                ${typeBadge}
+                            </td>
+
+                            <td>
+                                ${details}
+                            </td>
+
+                            <td>
+                                ${severityBadge}
+                            </td>
+
+                            <td>
+                                ${statusBadge}
+                            </td>
+
+                            <td>
+                                ${escapeHtml(
+                                    alert.timestamp || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                ${resolveButton}
+                            </td>
+
+                        </tr>
+                    `;
+
+                })
+                .join("");
+
+    }
+
+
+    /* =========================================================
+       THREAT TABLE
+       ========================================================= */
+
+    function updateThreats(files) {
+
+        const table =
+            document.getElementById(
+                "liveThreatsTable"
+            );
+
+        if (!table) {
+            return;
+        }
+
+
+        if (
+            !Array.isArray(files) ||
+            files.length === 0
+        ) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="6"
+                        class="text-center text-muted">
+                        No threats detected.
+                    </td>
+                </tr>
+            `;
+
+            return;
+
+        }
+
+
+        const recent =
+            files.slice(0, 10);
+
+
+        table.innerHTML =
+            recent
+                .map(function (file) {
+
+
+                    const risk =
+                        file.risk || "Safe";
+
+
+                    let riskBadge;
+
+
+                    if (risk === "Critical") {
+
+                        riskBadge =
+                            '<span class="badge bg-danger">'
+                            + escapeHtml(risk)
+                            + '</span>';
+
+                    }
+
+                    else if (risk === "High") {
+
+                        riskBadge =
+                            '<span class="badge bg-warning text-dark">'
+                            + escapeHtml(risk)
+                            + '</span>';
+
+                    }
+
+                    else if (risk === "Medium") {
+
+                        riskBadge =
+                            '<span class="badge bg-info">'
+                            + escapeHtml(risk)
+                            + '</span>';
+
+                    }
+
+                    else {
+
+                        riskBadge =
+                            '<span class="badge bg-success">'
+                            + escapeHtml(risk)
+                            + '</span>';
+
+                    }
+
+
+                    let statusBadge;
+
+
+                    if (
+                        file.status ===
+                        "Quarantined"
+                    ) {
+
+                        statusBadge =
+                            '<span class="badge bg-danger">'
+                            + escapeHtml(file.status)
+                            + '</span>';
+
+                    }
+
+                    else if (
+                        file.status ===
+                        "Restored"
+                    ) {
+
+                        statusBadge =
+                            '<span class="badge bg-success">'
+                            + escapeHtml(file.status)
+                            + '</span>';
+
+                    }
+
+                    else {
+
+                        statusBadge =
+                            '<span class="badge bg-secondary">'
+                            + escapeHtml(
+                                file.status || "-"
+                              )
+                            + '</span>';
+
+                    }
+
+
+                    return `
+                        <tr>
+
+                            <td>
+                                ${escapeHtml(file.id ?? "-")}
+                            </td>
+
+                            <td>
+                                <i class="bi bi-file-earmark-fill text-primary"></i>
+                                ${escapeHtml(
+                                    file.original_name || "-"
+                                )}
+                            </td>
+
+                            <td>
+                                <span class="badge bg-secondary">
+                                    ${escapeHtml(
+                                        file.risk_score ?? "-"
+                                    )}
+                                </span>
+                            </td>
+
+                            <td>
+                                ${riskBadge}
+                            </td>
+
+                            <td>
+                                ${statusBadge}
+                            </td>
+
+                            <td>
+                                ${escapeHtml(
+                                    file.timestamp || "-"
+                                )}
+                            </td>
+
+                        </tr>
+                    `;
+
+                })
+                .join("");
+
+    }
+
+
+    /* =========================================================
+       UPDATE CHARTS
+       ========================================================= */
+
+    function updateCharts(data) {
+
+        const safe =
+            Number(data.safe || 0);
+
+        const quarantined =
+            Number(data.quarantined || 0);
+
+        const critical =
+            Number(data.critical || 0);
+
+        const scanned =
+            Number(data.scanned || 0);
+
+
+        if (pieChart) {
+
+            pieChart.data.datasets[0].data = [
+                safe,
+                quarantined,
+                critical
+            ];
+
+            pieChart.update("none");
+
+        }
+
+
+        if (barChart) {
+
+            barChart.data.datasets[0].data = [
+                scanned,
+                safe,
+                quarantined,
+                critical
+            ];
+
+            barChart.update("none");
+
+        }
+
+    }
+
+
+    /* =========================================================
+       MAIN LIVE UPDATE
+       ========================================================= */
+
+    async function updateLiveDashboard() {
+
+        try {
+
+            const response =
+                await fetch(
+                    LIVE_API,
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "HTTP " + response.status
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Live data received:",
+                data
+            );
+
+
+            /* =================================================
+               FILE STATISTICS
+               ================================================= */
+
+            updateElement(
+                "liveScanned",
+                data.scanned
+            );
+
+            updateElement(
+                "liveSafe",
+                data.safe
+            );
+
+            updateElement(
+                "liveQuarantined",
+                data.quarantined
+            );
+
+            updateElement(
+                "liveCritical",
+                data.critical
+            );
+
+
+            /* =================================================
+               ALERT STATISTICS
+               ================================================= */
+
+            if (data.alert_stats) {
+
+                updateElement(
+                    "activeAlerts",
+                    data.alert_stats.active
+                );
+
+            }
+
+
+            /* =================================================
+               SYSTEM STATUS
+               ================================================= */
+
+            if (data.system_status) {
+
+                const system =
+                    data.system_status;
+
+
+                updateElement(
+                    "liveCPU",
+                    Number(system.cpu || 0).toFixed(1)
+                    + "%"
+                );
+
+
+                updateElement(
+                    "liveMemory",
+                    Number(system.memory || 0).toFixed(1)
+                    + "%"
+                );
+
+
+                updateElement(
+                    "liveDisk",
+                    Number(system.disk || 0).toFixed(1)
+                    + "%"
+                );
+
+
+                updateProgressBar(
+                    "cpuProgress",
+                    system.cpu,
+                    25,
+                    40
+                );
+
+
+                updateProgressBar(
+                    "memoryProgress",
+                    system.memory,
+                    70,
+                    86
+                );
+
+
+                updateProgressBar(
+                    "diskProgress",
+                    system.disk,
+                    45,
+                    60
+                );
+
+
+                updateSystemStatus(
+                    system.status
+                );
+
+
+                updateElement(
+                    "liveUpload",
+                    system.network_speed_up
+                );
+
+
+                updateElement(
+                    "liveDownload",
+                    system.network_speed_down
+                );
+
+
+                updateElement(
+                    "liveSent",
+                    system.network_sent
+                );
+
+
+                updateElement(
+                    "liveReceived",
+                    system.network_recv
+                );
+
+
+                updateElement(
+                    "liveProcessCount",
+                    system.process_count
+                );
+
+
+                updateProcesses(
+                    system.top_processes
+                );
+
+
+                updateElement(
+                    "liveLastBackup",
+                    system.last_backup
+                );
+
+
+                updateElement(
+                    "liveLastRecovery",
+                    system.last_recovery
+                );
+
+            }
+
+
+            /* =================================================
+               CHARTS
+               ================================================= */
+
+            updateCharts(data);
+
+
+            /* =================================================
+               ALERT TABLE
+               ================================================= */
+
+            updateAlerts(
+                data.alerts
+            );
+
+
+            /* =================================================
+               THREAT TABLE
+               ================================================= */
+
+            updateThreats(
+                data.files
+            );
+
+
+            /* =================================================
+               LAST UPDATE
+               ================================================= */
+
+            updateElement(
+                "lastLiveUpdate",
+                "Last update: "
+                + new Date().toLocaleTimeString()
+            );
+
+
+            /* =================================================
+               CONNECTION STATUS
+               ================================================= */
+
+            const indicator =
+                document.getElementById(
+                    "liveConnection"
+                );
+
+
+            if (indicator) {
+
+                indicator.textContent =
+                    "● Live";
+
+                indicator.className =
+                    "badge bg-success fs-6 p-2";
+
+            }
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "Live dashboard error:",
+                error
+            );
+
+
+            const indicator =
+                document.getElementById(
+                    "liveConnection"
+                );
+
+
+            if (indicator) {
+
+                indicator.textContent =
+                    "● Offline";
+
+                indicator.className =
+                    "badge bg-danger fs-6 p-2";
+
+            }
+
+
+            updateElement(
+                "lastLiveUpdate",
+                "Connection error"
+            );
+
+        }
+
+    }
+
+
+
+
+   /* =========================================================
+   INITIAL LOAD
+   ========================================================= */
+
+updateLiveDashboard();
+
+
+/* =========================================================
+   LIVE UPDATE EVERY 5 SECONDS
+   ========================================================= */
+
+setInterval(
+    updateLiveDashboard,
+    5000
+);
+
+});
+
+</script>
+
+{% endblock %}
