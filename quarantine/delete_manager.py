@@ -4,8 +4,24 @@ import os
 from quarantine.metadata_manager import MetadataManager
 from quarantine.logger import log_event
 
-ENCRYPTED = Path("secure_repository/encrypted")
 
+# =========================================================
+# QUARANTINE STORAGE
+# =========================================================
+
+if os.getenv("VERCEL"):
+    ENCRYPTED = Path(
+        "/tmp/secure_repository/encrypted"
+    )
+else:
+    ENCRYPTED = Path(
+        "secure_repository/encrypted"
+    )
+
+
+# =========================================================
+# DELETE QUARANTINED FILE
+# =========================================================
 
 def delete_file(file_id):
 
@@ -17,20 +33,37 @@ def delete_file(file_id):
 
         if item["id"] == file_id:
 
-            encrypted_file = ENCRYPTED / item["stored_name"]
+            encrypted_file = (
+                ENCRYPTED /
+                item["stored_name"]
+            )
 
             if encrypted_file.exists():
 
-                os.remove(encrypted_file)
+                try:
+
+                    os.remove(
+                        encrypted_file
+                    )
+
+                except OSError as error:
+
+                    print(
+                        f"Warning: Could not delete "
+                        f"encrypted file: {error}"
+                    )
 
             log_event(
-                f'{item["original_name"]} permanently deleted'
+                f'{item["original_name"]} '
+                f'permanently deleted'
             )
 
             continue
 
         new_data.append(item)
 
-    MetadataManager.save(new_data)
+    MetadataManager.save(
+        new_data
+    )
 
-    print("File Deleted Successfully")
+    return True
