@@ -17,11 +17,11 @@ class AlertManager:
         parent = os.path.dirname(ALERTS_FILE)
 
         if parent:
-           os.makedirs(parent, exist_ok=True)
+            os.makedirs(parent, exist_ok=True)
 
-    if not os.path.exists(ALERTS_FILE):
-        with open(ALERTS_FILE, "w") as f:
-            json.dump([], f)
+        if not os.path.exists(ALERTS_FILE):
+            with open(ALERTS_FILE, "w") as f:
+                json.dump([], f)
 
     @staticmethod
     def add_failure_alert(
