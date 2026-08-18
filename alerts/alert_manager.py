@@ -4,16 +4,24 @@ import json
 import os
 from datetime import datetime
 
-ALERTS_FILE = "storage/alerts.json"
+if os.getenv("VERCEL"):
+    ALERTS_FILE = "/tmp/ai_disaster_alerts.json"
+else:
+    ALERTS_FILE = "storage/alerts.json"
 
 class AlertManager:
 
     @staticmethod
     def init():
-        os.makedirs("storage", exist_ok=True)
-        if not os.path.exists(ALERTS_FILE):
-            with open(ALERTS_FILE, 'w') as f:
-                json.dump([], f)
+
+        parent = os.path.dirname(ALERTS_FILE)
+
+        if parent:
+           os.makedirs(parent, exist_ok=True)
+
+    if not os.path.exists(ALERTS_FILE):
+        with open(ALERTS_FILE, "w") as f:
+            json.dump([], f)
 
     @staticmethod
     def add_failure_alert(
